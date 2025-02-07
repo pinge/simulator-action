@@ -36,6 +36,10 @@ inputs:
       OS and therefore Simulator will continue running after the job is finished
     required: true
     default: 'true'
+  locale:
+    description: The OS locale to start the Simulator with
+    required: false
+
 outputs:
   udid:
     description: 'UDID of the launched device, for use with e.g. xcrun command'

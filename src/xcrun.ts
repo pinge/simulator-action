@@ -11,6 +11,8 @@ export type DeviceInfo = {
   os: string
   os_version: string
   state: string
+  dataPath: string
+  globalPreferencesPath: string
 }
 
 export function deviceToString(device: DeviceInfo): string {
@@ -28,6 +30,7 @@ export async function getDevices(): Promise<DeviceInfo[]> {
       udid: string
       name: string
       state: string
+      dataPath: string
     }[]
   }
   core.info(`${Object.keys(runtimes).length} runtimes found`)
@@ -40,11 +43,13 @@ export async function getDevices(): Promise<DeviceInfo[]> {
       const os = osAndVersion.shift() || ''
       const os_version = osAndVersion.join('.')
       for (const device of devices) {
+        const globalPreferencesPath = `${device.dataPath}/Library/Preferences/.GlobalPreferences.plist`
         const info: DeviceInfo = {
           ...device,
           model: device.name,
           os,
-          os_version
+          os_version,
+          globalPreferencesPath
         }
         core.debug(deviceToString(info))
         allDevices.push(info)
@@ -75,4 +80,21 @@ async function xcrun(tail: string): Promise<string> {
     core.endGroup()
   }
   return stdout
+}
+
+export async function plutil(plist: string, options: string): Promise<void> {
+  const command = `plutil ${options} ${plist}`
+  core.info(`$ ${command}`)
+  const {stdout, stderr} = await execAsync(command)
+  if (stderr) {
+    core.warning(`Errors or warnings in the output of ${command}`)
+    core.startGroup(`[stderr] ${command}`)
+    core.warning(stderr)
+    core.endGroup()
+  }
+  if (core.isDebug()) {
+    core.startGroup(`[stdout] ${command}`)
+    core.debug(stdout)
+    core.endGroup()
+  }
 }

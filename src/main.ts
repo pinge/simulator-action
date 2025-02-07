@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
 import {boolean} from 'boolean'
 import * as semver from 'semver'
-import {deviceToString, getDevices, simctl} from './xcrun'
+import {deviceToString, getDevices, plutil, simctl} from './xcrun'
 
 async function run(): Promise<void> {
   try {
@@ -9,6 +9,7 @@ async function run(): Promise<void> {
     let os = core.getInput('os')
     const os_version = core.getInput('os_version')
     const udid = core.getInput('udid')
+    const locale = core.getInput('locale')
 
     if (!udid && !os && !os_version && !model) {
       // Give a reasonable default, otherwise we may end up with tvOS, which is
@@ -76,6 +77,16 @@ async function run(): Promise<void> {
     if (boolean(core.getInput('erase_before_boot'))) {
       core.info(`Erasing device...`)
       await simctl('erase', device.udid)
+    }
+
+    if (locale) {
+      core.info(`Changing device locale to ${locale}...`)
+      plutil(
+        device.globalPreferencesPath,
+        `-replace AppleLanguages -json "[\\"${locale}\\"]"`
+      )
+    } else {
+      // TODO make sure to reset the default locale in case it has changed
     }
 
     if (boolean(core.getInput('shutdown_after_job'))) {
