@@ -114,7 +114,7 @@ function run() {
             }
             if (locale) {
                 core.info(`Changing device locale to ${locale}...`);
-                (0, xcrun_1.plutil)(device.globalPreferencesPath, `-replace AppleLanguages -json "[\"${locale}\"]"`);
+                (0, xcrun_1.plutil)(device.globalPreferencesPath, `-replace AppleLanguages -json '["${locale}"]'`);
             }
             else {
                 // TODO make sure to reset the default locale in case it has changed

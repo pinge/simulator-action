@@ -83,7 +83,7 @@ async function run(): Promise<void> {
       core.info(`Changing device locale to ${locale}...`)
       plutil(
         device.globalPreferencesPath,
-        `-replace AppleLanguages -json "[\\"${locale}\\"]"`
+        `-replace AppleLanguages -json '["${locale}"]'`
       )
     } else {
       // TODO make sure to reset the default locale in case it has changed
