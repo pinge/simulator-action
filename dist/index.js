@@ -146,6 +146,7 @@ function run() {
                     yield (0, xcrun_1.simctl)('bootstatus', device.udid);
                 }
                 if (core.getInput('app_path') && core.getInput('app_bundle_id')) {
+                    core.info(`Installing ${core.getInput('app_bundle_id')}`);
                     yield (0, xcrun_1.install)(core.getInput('app_path'), core.getInput('app_bundle_id'), device.udid);
                 }
             }

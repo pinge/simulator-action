@@ -126,6 +126,7 @@ async function run(): Promise<void> {
       }
 
       if (core.getInput('app_path') && core.getInput('app_bundle_id')) {
+        core.info(`Installing ${core.getInput('app_bundle_id')}`)
         await install(core.getInput('app_path'), core.getInput('app_bundle_id'), device.udid)
       }
     }
