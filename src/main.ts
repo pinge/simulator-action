@@ -1,4 +1,5 @@
 import * as core from '@actions/core'
+import * as exec from '@actions/exec'
 import {boolean} from 'boolean'
 import * as semver from 'semver'
 import {deviceToString, getDevices, plutil, simctl} from './xcrun'
@@ -95,9 +96,34 @@ async function run(): Promise<void> {
     core.info(`Booting device.`)
     await simctl('boot', device.udid)
 
-    if (boolean(core.getInput('wait_for_boot'))) {
-      core.info(`Waiting for device to finish booting.`)
-      await simctl('bootstatus', device.udid)
+    if (core.getInput('wait_for_boot')) {
+      if (core.getInput('wait_for_boot') === 'migration') {
+        core.info(`Waiting for device to finish booting using data migration.`)
+        while (true) {
+          try {
+            let result = ''
+            core.info('Checking data migration status..')
+            const command = `xcrun simctl spawn $UDID log show --predicate 'eventMessage contains \"com.apple.assetsd.migration\"' | grep UserEventAgent | grep Completed | grep -v log`
+            await exec.exec(`/bin/bash -c "${command}"`, [], {
+              listeners: {
+                stdout: (data: Buffer) => {
+                  result += data.toString()
+                }
+              }
+            })
+            if (result.trim() !== '') {
+              core.info(`Data migration finished.`)
+              break
+            }
+          } catch (error) {
+            core.warning(error instanceof Error ? error.message : String(error))
+          }
+          await new Promise(resolve => setTimeout(resolve, 2000))
+        }
+      } else {
+        core.info(`Waiting for device to finish booting using bootstatus.`)
+        await simctl('bootstatus', device.udid)
+      }
     }
 
     core.setOutput('udid', device.udid)

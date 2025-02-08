@@ -25,10 +25,9 @@ inputs:
     default: 'true'
   wait_for_boot:
     description: >
-      Whether the action must wait for the Simulator to finish booting requested
-      image
+      Whether the action must wait for the Simulator to finish booting.
+      There are two possible values: 'bootstatus' and 'migration'
     required: false
-    default: 'false'
   shutdown_after_job:
     description: >
       Whether the Simulator should be shut down after the job has finished. This
