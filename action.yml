@@ -35,6 +35,12 @@ inputs:
       OS and therefore Simulator will continue running after the job is finished
     required: true
     default: 'true'
+  app_path:
+    description: The path to the .app folder to be installed after boot
+    required: false
+  app_bundle_id:
+    description: The bundle identifier of the app to be installed after boot
+    required: false
   locale:
     description: The OS locale to start the Simulator with
     required: false

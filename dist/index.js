@@ -145,6 +145,9 @@ function run() {
                     core.info(`Waiting for device to finish booting using bootstatus.`);
                     yield (0, xcrun_1.simctl)('bootstatus', device.udid);
                 }
+                if (core.getInput('app_path') && core.getInput('app_bundle_id')) {
+                    yield (0, xcrun_1.install)(core.getInput('app_path'), core.getInput('app_bundle_id'), device.udid);
+                }
             }
             core.setOutput('udid', device.udid);
         }
@@ -224,7 +227,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.plutil = exports.simctl = exports.getDevices = exports.deviceToString = void 0;
+exports.plutil = exports.install = exports.simctl = exports.getDevices = exports.deviceToString = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const child_process_1 = __nccwpck_require__(2081);
 const util_1 = __nccwpck_require__(3837);
@@ -265,6 +268,13 @@ function simctl(action, udid) {
     });
 }
 exports.simctl = simctl;
+function install(appPath, bundleId, udid) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield xcrun(`simctl uninstall ${udid} ${bundleId}`);
+        yield xcrun(`simctl install ${udid} ${appPath}`);
+    });
+}
+exports.install = install;
 function xcrun(tail) {
     return __awaiter(this, void 0, void 0, function* () {
         const command = `xcrun ${tail}`;

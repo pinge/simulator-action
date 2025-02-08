@@ -2,7 +2,7 @@ import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import {boolean} from 'boolean'
 import * as semver from 'semver'
-import {deviceToString, getDevices, plutil, simctl} from './xcrun'
+import {deviceToString, getDevices, install, plutil, simctl} from './xcrun'
 
 async function run(): Promise<void> {
   try {
@@ -123,6 +123,10 @@ async function run(): Promise<void> {
       } else {
         core.info(`Waiting for device to finish booting using bootstatus.`)
         await simctl('bootstatus', device.udid)
+      }
+
+      if (core.getInput('app_path') && core.getInput('app_bundle_id')) {
+        await install(core.getInput('app_path'), core.getInput('app_bundle_id'), device.udid)
       }
     }
 
