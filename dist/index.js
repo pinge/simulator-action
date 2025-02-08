@@ -110,6 +110,13 @@ function run() {
             else {
                 // TODO make sure to reset the default locale in case it has changed
             }
+            if ((0, boolean_1.boolean)(core.getInput('disable_apple_services'))) {
+                core.info(`Disabling Apple services...`);
+                (0, xcrun_1.plutil)(device.globalPreferencesPath, `-replace AssistantEnabled -bool NO`);
+                (0, xcrun_1.plutil)(device.globalPreferencesPath, `-replace AppleIDDisabled -bool YES`);
+                (0, xcrun_1.plutil)(device.globalPreferencesPath, `-replace AutomaticDownloadEnabled -bool NO`);
+            }
+            (0, xcrun_1.plutil)(device.globalPreferencesPath, `-replace UIBackgroundRefreshDisabled -bool YES`);
             if ((0, boolean_1.boolean)(core.getInput('shutdown_after_job'))) {
                 core.saveState('udid', device.udid);
             }
@@ -272,7 +279,7 @@ exports.simctl = simctl;
 function install(appPath, bundleId, udid) {
     return __awaiter(this, void 0, void 0, function* () {
         yield xcrun(`simctl uninstall ${udid} ${bundleId}`);
-        yield xcrun(`simctl install ${udid} ${appPath}`);
+        yield xcrun(`simctl install ${udid} "${appPath}"`);
     });
 }
 exports.install = install;

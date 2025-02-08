@@ -90,6 +90,20 @@ async function run(): Promise<void> {
       // TODO make sure to reset the default locale in case it has changed
     }
 
+    if (boolean(core.getInput('disable_apple_services'))) {
+      core.info(`Disabling Apple services...`)
+      plutil(device.globalPreferencesPath, `-replace AssistantEnabled -bool NO`)
+      plutil(device.globalPreferencesPath, `-replace AppleIDDisabled -bool YES`)
+      plutil(
+        device.globalPreferencesPath,
+        `-replace AutomaticDownloadEnabled -bool NO`
+      )
+    }
+    plutil(
+      device.globalPreferencesPath,
+      `-replace UIBackgroundRefreshDisabled -bool YES`
+    )
+
     if (boolean(core.getInput('shutdown_after_job'))) {
       core.saveState('udid', device.udid)
     }
@@ -127,7 +141,11 @@ async function run(): Promise<void> {
 
       if (core.getInput('app_path') && core.getInput('app_bundle_id')) {
         core.info(`Installing ${core.getInput('app_bundle_id')}`)
-        await install(core.getInput('app_path'), core.getInput('app_bundle_id'), device.udid)
+        await install(
+          core.getInput('app_path'),
+          core.getInput('app_bundle_id'),
+          device.udid
+        )
       }
     }
 

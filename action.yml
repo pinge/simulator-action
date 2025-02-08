@@ -44,6 +44,10 @@ inputs:
   locale:
     description: The OS locale to start the Simulator with
     required: false
+  disable_apple_services:
+    description: Disable Apple services (Assistant, Apple ID, Automatic Updates, Siri)
+    required: false
+    default: 'false'
 
 outputs:
   udid:

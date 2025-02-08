@@ -64,9 +64,13 @@ export async function simctl(action: string, udid: string): Promise<void> {
   await xcrun(`simctl ${action} ${udid}`)
 }
 
-export async function install(appPath: string, bundleId: string, udid: string): Promise<void> {
+export async function install(
+  appPath: string,
+  bundleId: string,
+  udid: string
+): Promise<void> {
   await xcrun(`simctl uninstall ${udid} ${bundleId}`)
-  await xcrun(`simctl install ${udid} ${appPath}`)
+  await xcrun(`simctl install ${udid} "${appPath}"`)
 }
 
 async function xcrun(tail: string): Promise<string> {
