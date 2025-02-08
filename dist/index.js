@@ -122,7 +122,7 @@ function run() {
                         try {
                             let result = '';
                             core.info('Checking data migration status..');
-                            const command = `xcrun simctl spawn $UDID log show --predicate 'eventMessage contains \"com.apple.assetsd.migration\"' | grep UserEventAgent | grep Completed | grep -v log`;
+                            const command = `xcrun simctl spawn ${device.udid} log show --predicate 'eventMessage contains \\"com.apple.assetsd.migration\\"' | grep UserEventAgent | grep Completed | grep -v log`;
                             yield exec.exec(`/bin/bash -c "${command}"`, [], {
                                 listeners: {
                                     stdout: (data) => {
