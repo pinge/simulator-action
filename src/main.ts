@@ -97,11 +97,12 @@ async function run(): Promise<void> {
     if (core.getInput('wait_for_boot')) {
       if (core.getInput('wait_for_boot') === 'migration') {
         core.info(`Waiting for device to finish booting using data migration.`)
+        // eslint-disable-next-line no-constant-condition
         while (true) {
           try {
             let result = ''
             core.info('Checking data migration status..')
-            const command = `xcrun simctl spawn ${device.udid} log show --predicate 'eventMessage contains \\"com.apple.assetsd.migration\\"' | grep UserEventAgent | grep Completed | grep -v log`
+            const command = `xcrun simctl spawn ${device.udid} log show --style compact --predicate 'subsystem == "com.apple.xpc.activity" and eventMessage beginsWith "Completed: com.apple.assetsd.migration" and eventType = logEvent' 2>/dev/null |  grep -v -E "^Timestamp"`
             await exec.exec(`/bin/bash -c "${command}"`, [], {
               listeners: {
                 stdout: (data: Buffer) => {
@@ -116,7 +117,7 @@ async function run(): Promise<void> {
           } catch (error) {
             core.warning(error instanceof Error ? error.message : String(error))
           }
-          await new Promise(resolve => setTimeout(resolve, 2000))
+          await new Promise(resolve => setTimeout(resolve, 1000))
         }
       } else {
         core.info(`Waiting for device to finish booting using bootstatus.`)
