@@ -102,7 +102,7 @@ async function run(): Promise<void> {
           try {
             let result = ''
             core.info('Checking data migration status..')
-            const command = `xcrun simctl spawn ${device.udid} log show --style compact --predicate 'subsystem == "com.apple.xpc.activity" and eventMessage beginsWith "Completed: com.apple.assetsd.migration" and eventType = logEvent' 2>/dev/null |  grep -v -E "^Timestamp"`
+            const command = `xcrun simctl spawn ${device.udid} log show --style compact --predicate 'subsystem == \\"com.apple.xpc.activity\\" and eventMessage beginsWith \\"Completed: com.apple.assetsd.migration\\" and eventType = logEvent' 2>/dev/null |  grep -v -E \\"^Timestamp\\"`
             await exec.exec(`/bin/bash -c "${command}"`, [], {
               listeners: {
                 stdout: (data: Buffer) => {
