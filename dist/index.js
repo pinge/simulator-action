@@ -145,6 +145,7 @@ function run() {
                 }
                 if (core.getInput('app_path') && core.getInput('app_bundle_id')) {
                     core.info(`Installing ${core.getInput('app_bundle_id')}`);
+                    yield new Promise(resolve => setTimeout(resolve, 15000));
                     yield (0, xcrun_1.install)(core.getInput('app_path'), core.getInput('app_bundle_id'), device.udid);
                 }
             }
